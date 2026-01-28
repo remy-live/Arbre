@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Arbre Studio - V25 (Donate Header)</title>
+    <style>
+        :root {
+            --bg-canvas: #FFFFFF;
+            --bg-panel: #FFFFFF;
+            --bg-section: #F3F4F6;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --border-color: #E5E7EB;
+            --accent: #3B82F6;
+            --radius: 8px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-canvas);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: var(--bg-panel);
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 30;
+            height: 60px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        h1 { font-size: 1.1rem; margin: 0; color: var(--text-main); font-weight: 700; }
+        
+        .toolbar { display: flex; gap: 8px; align-items: center; }
+        .separator { width: 1px; height: 20px; background: #E5E7EB; margin: 0 2px; }
+
+        button {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: #fff;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        button:hover { background: #F9FAFB; border-color: #D1D5DB; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        button.primary { background: var(--text-main); color: white; border: none; }
+        button.primary:hover { opacity: 0.9; }
+        
+        button.action-btn { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+        button.action-btn:hover { background: #dcfce7; }
+
+        /* BOUTON DONATE (Discret Header) */
+        button.donate-btn { border-color: #fecaca; color: #e11d48; background: #fff1f2; }
+        button.donate-btn:hover { background: #ffe4e6; border-color: #fda4af; }
+
+        /* BOUTON MODE DESIGN */
+        button#btnDesignMode { border-width: 2px; }
+        button#btnDesignMode.active {
+            background: #ECFDF5;
+            border-color: #10B981;
+            color: #047857;
+            font-weight: bold;
+        }
+
+        /* --- LAYOUT --- */
+        #workspace { display: flex; flex: 1; overflow: hidden; }
+
+        /* --- SIDEBARS --- */
+        .sidebar {
+            background: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 20;
+            padding: 0;
+            flex-shrink: 0;
+        }
+        .sidebar-left { width: 300px; border-right: 1px solid var(--border-color); }
+        .sidebar-right { width: 360px; border-left: 1px solid var(--border-color); }
+
+        .panel-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: #fff;
+            position: sticky; top: 0; z-index: 10;
+        }
+        .panel-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .panel-content { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+        /* --- CANVAS --- */
+        #canvas-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background-color: #F9F9F9;
+            cursor: default;
+        }
+        #canvas-wrapper.panning { cursor: grabbing; }
+
+        #canvas-bg {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(#CBD5E1 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* --- UI COMPONENTS --- */
+        .settings-group {
+            background: var(--bg-section);
+            border-radius: var(--radius);
+            padding: 15px;
+            border: 1px solid transparent;
+        }
+        
+        .control-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+        .control-row:last-child { margin-bottom: 0; }
+        .control-col { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+
+        label { font-size: 0.85rem; color: var(--text-main); font-weight: 500; }
+        .label-sm { font-size: 0.8rem; color: var(--text-muted); min-width: 60px; }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%; padding: 8px 10px; border: 1px solid #D1D5DB; border-radius: 6px;
+            font-size: 0.9rem; background: #fff; box-sizing: border-box;
+        }
+        
+        input[type="range"] { width: 100%; cursor: pointer; }
+
+        .checkbox-wrapper { display: flex; align-items: center; gap: 8px; }
+        input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
+
+        .bar-toggle {
+            display: flex; align-items: center; gap: 4px;
+            background: #fff; border: 1px solid #D1D5DB; padding: 4px 8px; border-radius: 6px;
+            cursor: pointer;
+        }
+        .bar-toggle:hover { border-color: var(--accent); }
+        .bar-symbol { font-family: serif; font-weight: bold; text-decoration: overline; font-size: 1.1rem; line-height: 1; }
+
+        .palette-grid {
+            display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; width: 100%;
+        }
+        .swatch {
+            width: 100%; aspect-ratio: 1/1; border-radius: 3px; cursor: pointer;
+            border: 1px solid #000000; box-sizing: border-box; transition: transform 0.1s;
+        }
+        .swatch:hover { transform: scale(1.3); z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .swatch.white-swatch { background: #fff; }
+        .swatch-custom { background: linear-gradient(135deg, #E5E7EB, #9CA3AF); position: relative; }
+        .hidden-color-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .btn-add { background: #10B981; color: white; border: none; }
+        .btn-add:hover { background: #059669; }
+        .btn-del { background: #EF4444; color: white; border: none; }
+        .btn-del:hover { background: #DC2626; }
+
+        /* SVG STYLES */
+        text { user-select: none; pointer-events: none; }
+        .node { cursor: pointer; }
+        body.design-mode-active .node { cursor: grab; }
+        body.design-mode-active .node:active { cursor: grabbing; }
+        .node circle { transition: stroke-width 0.1s; }
+        .node:hover circle { stroke-opacity: 0.7; }
+        .node.selected circle { stroke-dasharray: 6 3; stroke-opacity: 0.8; }
+        .selection-ring { pointer-events: none; }
+
+        /* --- MODALE DONATE --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 100;
+            display: none; /* Caché par défaut */
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(2px);
+        }
+        .modal-box {
+            background: white; padding: 25px; border-radius: 12px; width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .modal-box h3 { margin-top: 0; color: #1F2937; margin-bottom: 10px; }
+        .modal-box p { color: #6B7280; font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px; }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+        
+        .btn-paypal {
+            background: #0070ba; color: white; text-decoration: none;
+            padding: 8px 16px; border-radius: 6px; font-weight: 500; font-size: 0.9rem;
+            display: inline-block;
+        }
+        .btn-paypal:hover { background: #005ea6; }
+        
+        .btn-cancel {
+            background: #F3F4F6; color: #4B5563; border: none;
+            padding: 8px 16px; border-radius: 6px; cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .btn-cancel:hover { background: #E5E7EB; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🌳 Arbre Studio</h1>
+    <div class="toolbar">
+        <button onclick="undo()" id="btnUndo" title="Annuler">↩️</button>
+        <button onclick="redo()" id="btnRedo" title="Rétablir">↪️</button>
+        <div class="separator"></div>
+        <button onclick="saveProject()" title="Sauvegarder">💾</button>
+        <button onclick="document.getElementById('fileInput').click()" title="Ouvrir">📂</button>
+        <input type="file" id="fileInput" accept=".json" style="display:none" onchange="loadProject(this)">
+        
+        <div class="separator"></div>
+
+        <button onclick="centerView()" title="Recentrer">🎯</button>
+        <button id="btnDesignMode" onclick="toggleDesignMode()">🔓 Mode Design</button>
+        
+        <div class="separator"></div>
+        
+        <button class="donate-btn" onclick="openDonateModal()" title="Soutenir le projet">❤️</button>
+        <div class="separator"></div>
+        <button class="copy-btn" id="btnCopy" onclick="copyToClipboard()">📋 Copier</button>
+        <button onclick="exportSVG()">SVG</button>
+        <button class="primary" onclick="exportPNG()">PNG</button>
+    </div>
+</header>
+
+<div id="workspace">
+    
+    <aside class="sidebar sidebar-left">
+        <div class="panel-header">
+            <h2 class="panel-title">Configuration Globale</h2>
+        </div>
+        <div class="panel-content">
+            <div class="settings-group">
+                <div class="control-col">
+                    <label>Police</label>
+                    <select id="globalFont" onchange="saveAndDraw()">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Courier New', monospace">Courier</option>
+                        <option value="'Verdana', sans-serif">Verdana</option>
+                        <option value="'Georgia', serif">Georgia</option>
+                        <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <label>Taille Texte</label>
+                    <input type="number" id="globalFontSize" value="14" min="8" max="24" oninput="saveAndDraw()" style="width: 70px;">
+                </div>
+                <div class="control-row">
+                    <label>Orientation (Auto)</label>
+                    <button onclick="toggleOrientation()" id="btnOrientation" style="font-size:0.8rem; padding:6px 10px;">Horizontal</button>
+                </div>
+                <div class="control-row">
+                    <label>Lignes</label>
+                    <select id="globalLineType" onchange="saveAndDraw()" style="width: 100px;">
+                        <option value="curve">Courbes</option>
+                        <option value="straight">Droites</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <span class="label-sm" style="display:block; margin-bottom:10px; color:#aaa;">Espacement (Auto)</span>
+                <div class="control-col">
+                    <div class="control-row">
+                        <label>Largeur</label>
+                        <input type="range" id="sliderLevelGap" min="100" max="500" value="200" onchange="pushHistory()" oninput="updateLayoutAndDraw()">
+                    </div>
+                </div>
+                <div class="control-col">
+                    <div class="control-row">
+                        <label>Hauteur</label>
+                        <input type="range" id="sliderSiblingGap" min="40" max="200" value="80" onchange="pushHistory()" oninput="updateLayoutAndDraw()">
+                    </div>
+                </div>
+                <div class="control-row" style="margin-top:10px;">
+                    <button onclick="forceAutoLayoutWithHistory()" style="width:100%; justify-content:center;">⚡ Réorganiser l'arbre</button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="control-row">
+                    <label>Taille des Bulles</label>
+                    <input type="number" id="globalNodeRadius" value="24" min="10" max="60" oninput="saveAndDraw()" style="width: 70px;">
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <div id="canvas-wrapper">
+        <div id="canvas-bg"></div>
+        <svg id="treeSvg" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <g id="viewport">
+                <g id="mainGroup"></g>
+            </g>
+        </svg>
+    </div>
+
+    <aside class="sidebar sidebar-right">
+        <div class="panel-header">
+            <h2 class="panel-title" id="panel-title">Propriétés</h2>
+        </div>
+        
+        <div id="no-selection" style="padding: 50px 20px; text-align: center; color: #9CA3AF;">
+            Cliquez sur un élément pour l'éditer.
+        </div>
+
+        <div id="selection-controls" style="display: none;" class="panel-content">
+            <div class="settings-group">
+                <div class="control-row">
+                    <label class="label-sm">Nom</label>
+                    <div style="flex:1; display:flex; gap:8px; align-items:center;">
+                        <input type="text" id="inputName" placeholder="Ex: A">
+                        <label class="bar-toggle" title="Événement contraire">
+                            <span class="bar-symbol">A̅</span>
+                            <input type="checkbox" id="inputNodeBar">
+                        </label>
+                    </div>
+                </div>
+                <div class="control-col">
+                    <label class="label-sm">Couleur Texte</label>
+                    <div id="palette-text" class="palette-grid"></div>
+                </div>
+                <div class="control-col">
+                    <label class="label-sm">Couleur Fond</label>
+                    <div id="palette-node-fill" class="palette-grid"></div>
+                </div>
+                <div class="control-row" style="margin-top:10px;">
+                    <label class="label-sm">Contour</label>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="inputNodeStrokeCheck">
+                        <input type="number" id="inputNodeStrokeWidth" min="1" max="10" value="2" style="width:60px;">
+                    </div>
+                </div>
+                <div id="palette-node-stroke" class="palette-grid" style="margin-bottom: 10px;"></div>
+            </div>
+
+            <div class="settings-group">
+                <div class="control-row">
+                    <label class="label-sm">Proba</label>
+                    <input type="text" id="inputProb" placeholder="Ex: 1/4">
+                </div>
+                <div class="control-row">
+                    <label class="label-sm">Style</label>
+                    <input type="number" id="inputLinkWidth" min="1" max="10" value="2" style="width:50px;">
+                    <select id="inputLinkStyle">
+                        <option value="solid">Plein</option>
+                        <option value="dashed">Tirets</option>
+                        <option value="dotted">Points</option>
+                    </select>
+                </div>
+                <div class="control-col">
+                    <label class="label-sm">Couleur</label>
+                    <div id="palette-link" class="palette-grid"></div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn-add" onclick="addChild()">+ Enfant</button>
+                <button class="btn-del" onclick="deleteNode()">Supprimer</button>
+            </div>
+        </div>
+    </aside>
+
+</div>
+
+<div id="donateModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Soutenir le projet ❤️</h3>
+        <p>
+            Ce logiciel est gratuit, open-source et sans publicité.<br>
+            Si cet outil vous est utile, vous pouvez participer aux frais d'hébergement en m'offrant un café !
+        </p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeDonateModal()">Plus tard</button>
+            <a href="https://www.paypal.com/donate/?hosted_button_id=VKZXDC5BM2GHA" target="_blank" class="btn-paypal" onclick="closeDonateModal()">
+                Faire un don via PayPal
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const PRESETS = ['#1F2937','#FFFFFF','#9CA3AF','#EF4444','#F97316','#EAB308','#84CC16','#22C55E','#06B6D4','#3B82F6','#6366F1','#A855F7','#EC4899','#78350F'];
+
+    // DATA INITIAL
+    let treeData = {
+        id: 1, name: "Départ", prob: "", 
+        nodeFill: "#FFFFFF", nodeStroke: "#1F2937", nodeStrokeWidth: 2, hasStroke: true, textColor: "#1F2937", bar: false,
+        linkColor: "#1F2937", linkWidth: 2, linkStyle: "solid",
+        children: [
+            { id: 2, name: "S", prob: "3/4", nodeFill: "#FFFFFF", nodeStroke: "#1F2937", nodeStrokeWidth: 2, hasStroke: true, textColor: "#1F2937", linkColor: "#1F2937", linkWidth: 2, linkStyle: "solid", children: [] },
+            { id: 3, name: "E", prob: "1/4", nodeFill: "#FFFFFF", nodeStroke: "#D97706", nodeStrokeWidth: 2, hasStroke: true, textColor: "#D97706", linkColor: "#D97706", linkWidth: 2, linkStyle: "solid", children: [] }
+        ]
+    };
+
+    let nextId = 4;
+    let selectedNodeId = null;
+    let isDesignMode = false;
+    let view = { x: 0, y: 0, scale: 1, isPanning: false, startX: 0, startY: 0 };
+    let dragNode = null; 
+
+    // CONFIG
+    let CONFIG = {
+        orientation: 'horizontal',
+        fontFamily: 'Arial, sans-serif',
+        fontSize: 14,
+        nodeRadius: 24,
+        lineType: 'curve',
+        levelGap: 200,
+        siblingGap: 80
+    };
+
+    let historyStack = [];
+    let historyIndex = -1;
+    const MAX_HISTORY = 50;
+
+    window.onload = () => {
+        initPalette('palette-node-fill', 'nodeFill');
+        initPalette('palette-node-stroke', 'nodeStroke');
+        initPalette('palette-text', 'textColor');
+        initPalette('palette-link', 'linkColor');
+        setupInteractions();
+        forceAutoLayout(false);
+        setTimeout(centerView, 50);
+        pushHistory(); 
+    };
+
+    // --- DONATE MODAL ---
+    function openDonateModal() { document.getElementById('donateModal').style.display = 'flex'; }
+    function closeDonateModal() { document.getElementById('donateModal').style.display = 'none'; }
+    document.getElementById('donateModal').addEventListener('click', (e) => {
+        if(e.target.id === 'donateModal') closeDonateModal();
+    });
+
+    // --- HISTORY ---
+    function pushHistory() {
+        if (historyIndex < historyStack.length - 1) {
+            historyStack = historyStack.slice(0, historyIndex + 1);
+        }
+        const state = JSON.stringify({ tree: treeData, config: CONFIG, nextId: nextId });
+        historyStack.push(state);
+        if (historyStack.length > MAX_HISTORY) historyStack.shift();
+        historyIndex = historyStack.length - 1;
+        updateHistoryButtons();
+    }
+
+    function undo() {
+        if (historyIndex > 0) {
+            historyIndex--;
+            restoreState(historyStack[historyIndex]);
+        }
+    }
+
+    function redo() {
+        if (historyIndex < historyStack.length - 1) {
+            historyIndex++;
+            restoreState(historyStack[historyIndex]);
+        }
+    }
+
+    function restoreState(jsonState) {
+        const state = JSON.parse(jsonState);
+        treeData = state.tree;
+        CONFIG = state.config;
+        nextId = state.nextId;
+        
+        document.getElementById('globalFont').value = CONFIG.fontFamily;
+        document.getElementById('globalFontSize').value = CONFIG.fontSize;
+        document.getElementById('globalNodeRadius').value = CONFIG.nodeRadius;
+        document.getElementById('globalLineType').value = CONFIG.lineType;
+        document.getElementById('sliderLevelGap').value = CONFIG.levelGap || 200;
+        document.getElementById('sliderSiblingGap').value = CONFIG.siblingGap || 80;
+        document.getElementById('btnOrientation').innerText = (CONFIG.orientation === 'horizontal') ? 'Horizontal' : 'Vertical';
+
+        if (selectedNodeId) selectNode(selectedNodeId);
+        else document.getElementById('selection-controls').style.display = 'none';
+
+        draw();
+        updateHistoryButtons();
+    }
+
+    function updateHistoryButtons() {
+        document.getElementById('btnUndo').disabled = (historyIndex <= 0);
+        document.getElementById('btnRedo').disabled = (historyIndex >= historyStack.length - 1);
+    }
+
+    function saveAndDraw() {
+        updateGlobalConfig(false);
+        draw();
+        pushHistory();
+    }
+
+    // --- SAVE / LOAD ---
+    function saveProject() {
+        const projectData = { tree: treeData, config: CONFIG, nextId: nextId, version: "V25" };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projectData));
+        const link = document.createElement("a");
+        link.href = dataStr;
+        link.download = "projet_arbre.json";
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
+
+    function loadProject(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const state = JSON.parse(e.target.result);
+                if (state.tree && state.config) {
+                    treeData = state.tree;
+                    CONFIG = state.config;
+                    nextId = state.nextId || 100;
+                    historyStack = [];
+                    historyIndex = -1;
+                    restoreState(JSON.stringify(state));
+                    pushHistory();
+                    setTimeout(centerView, 50);
+                } else { alert("Fichier invalide."); }
+            } catch(err) { alert("Erreur : " + err); }
+        };
+        reader.readAsText(file);
+        input.value = '';
+    }
+
+    // --- LOGIC ---
+    function toggleDesignMode() {
+        isDesignMode = !isDesignMode;
+        const btn = document.getElementById('btnDesignMode');
+        if (isDesignMode) {
+            btn.classList.add('active');
+            btn.innerHTML = "🔓 Mode Design (ON)";
+            document.body.classList.add('design-mode-active');
+        } else {
+            btn.classList.remove('active');
+            btn.innerHTML = "🔓 Mode Design";
+            document.body.classList.remove('design-mode-active');
+        }
+    }
+
+    function setupInteractions() {
+        const wrapper = document.getElementById('canvas-wrapper');
+        wrapper.addEventListener('mousedown', (e) => {
+            if(e.target.tagName === 'svg' || e.target.id === 'viewport') {
+                view.isPanning = true;
+                view.startX = e.clientX - view.x;
+                view.startY = e.clientY - view.y;
+                wrapper.classList.add('panning');
+            }
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (view.isPanning) {
+                view.x = e.clientX - view.startX;
+                view.y = e.clientY - view.startY;
+                updateTransform();
+            } else if (dragNode && isDesignMode) {
+                const pt = getSVGPoint(e.clientX, e.clientY);
+                dragNode.x = pt.x;
+                dragNode.y = pt.y;
+                draw();
+            }
+        });
+        window.addEventListener('mouseup', () => {
+            if (dragNode) pushHistory();
+            view.isPanning = false;
+            dragNode = null;
+            wrapper.classList.remove('panning');
+        });
+        wrapper.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const scaleAmount = -e.deltaY * 0.001;
+            const newScale = Math.min(Math.max(0.1, view.scale + scaleAmount), 5);
+            const rect = wrapper.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const ox = (mouseX - view.x) / view.scale;
+            const oy = (mouseY - view.y) / view.scale;
+            view.x = mouseX - ox * newScale;
+            view.y = mouseY - oy * newScale;
+            view.scale = newScale;
+            updateTransform();
+        });
+    }
+
+    function updateTransform() {
+        const g = document.getElementById('viewport');
+        g.setAttribute('transform', `translate(${view.x}, ${view.y}) scale(${view.scale})`);
+        const bg = document.getElementById('canvas-bg');
+        bg.style.backgroundSize = `${24 * view.scale}px ${24 * view.scale}px`;
+        bg.style.backgroundPosition = `${view.x}px ${view.y}px`;
+    }
+
+    function getSVGPoint(clientX, clientY) {
+        const rect = document.getElementById('canvas-wrapper').getBoundingClientRect();
+        return {
+            x: (clientX - rect.left - view.x) / view.scale,
+            y: (clientY - rect.top - view.y) / view.scale
+        };
+    }
+
+    function centerView() {
+        const group = document.getElementById('mainGroup');
+        const bbox = group.getBBox();
+        const wrapper = document.getElementById('canvas-wrapper');
+        if (bbox.width === 0) return;
+        const w = wrapper.clientWidth;
+        const h = wrapper.clientHeight;
+        const padding = 100;
+        const scaleX = (w - padding) / bbox.width;
+        const scaleY = (h - padding) / bbox.height;
+        const fittedScale = Math.min(scaleX, scaleY);
+        let newScale = Math.min(fittedScale, 1.0);
+        if (newScale < 0.2) newScale = 0.2;
+        view.scale = newScale;
+        view.x = (w/2) - (bbox.x + bbox.width/2) * newScale;
+        view.y = (h/2) - (bbox.y + bbox.height/2) * newScale;
+        updateTransform();
+    }
+
+    function updateLayoutAndDraw() { forceAutoLayout(false); }
+
+    function forceAutoLayoutWithHistory() {
+        forceAutoLayout(true);
+        pushHistory();
+    }
+
+    function forceAutoLayout(shouldCenter = true) {
+        CONFIG.levelGap = parseInt(document.getElementById('sliderLevelGap').value);
+        CONFIG.siblingGap = parseInt(document.getElementById('sliderSiblingGap').value);
+        calculateLayoutRecursive(treeData, 0, { count: 0 }, CONFIG.levelGap, CONFIG.siblingGap);
+        draw(); 
+        if (shouldCenter) setTimeout(centerView, 10);
+    }
+
+    function calculateLayoutRecursive(node, depth, counter, lGap, sGap) {
+        const isHoriz = document.getElementById('btnOrientation').innerText === 'Horizontal';
+        const primary = depth * lGap;
+        if (!node.children || node.children.length === 0) {
+            const secondary = counter.count * sGap;
+            counter.count++;
+            node.x = isHoriz ? primary : secondary;
+            node.y = isHoriz ? secondary : primary;
+        } else {
+            node.children.forEach(child => calculateLayoutRecursive(child, depth + 1, counter, lGap, sGap));
+            const firstChild = node.children[0];
+            const lastChild = node.children[node.children.length - 1];
+            const midPoint = isHoriz 
+                ? (firstChild.y + lastChild.y) / 2 
+                : (firstChild.x + lastChild.x) / 2;
+            node.x = isHoriz ? primary : midPoint;
+            node.y = isHoriz ? midPoint : primary;
+        }
+    }
+
+    function toggleOrientation() {
+        const btn = document.getElementById('btnOrientation');
+        CONFIG.orientation = (CONFIG.orientation === 'horizontal') ? 'vertical' : 'horizontal';
+        btn.innerText = (CONFIG.orientation === 'horizontal') ? 'Horizontal' : 'Vertical';
+        forceAutoLayoutWithHistory();
+    }
+
+    function updateGlobalConfig(redraw = true) {
+        CONFIG.fontFamily = document.getElementById('globalFont').value;
+        CONFIG.fontSize = parseInt(document.getElementById('globalFontSize').value);
+        CONFIG.nodeRadius = parseInt(document.getElementById('globalNodeRadius').value);
+        CONFIG.lineType = document.getElementById('globalLineType').value;
+        if(redraw) draw();
+    }
+
+    function draw() {
+        const svgGroup = document.getElementById('mainGroup');
+        svgGroup.innerHTML = '';
+        svgGroup.setAttribute('font-family', CONFIG.fontFamily);
+        svgGroup.setAttribute('font-size', CONFIG.fontSize);
+        drawLinks(treeData, svgGroup);
+        drawNodes(treeData, svgGroup);
+    }
+
+    function drawLinks(node, container) {
+        if (!node.children) return;
+        node.children.forEach(child => {
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            let d = "";
+            if (CONFIG.lineType === 'straight') {
+                d = `M ${node.x} ${node.y} L ${child.x} ${child.y}`;
+            } else {
+                const dx = Math.abs(node.x - child.x);
+                const dy = Math.abs(node.y - child.y);
+                if (dx > dy) { 
+                    const midX = (node.x + child.x) / 2;
+                    d = `M ${node.x} ${node.y} C ${midX} ${node.y}, ${midX} ${child.y}, ${child.x} ${child.y}`;
+                } else {
+                    const midY = (node.y + child.y) / 2;
+                    d = `M ${node.x} ${node.y} C ${node.x} ${midY}, ${child.x} ${midY}, ${child.x} ${child.y}`;
+                }
+            }
+            path.setAttribute("d", d);
+            path.setAttribute("fill", "none");
+            path.setAttribute("stroke", child.linkColor || "#333");
+            path.setAttribute("stroke-width", child.linkWidth || 2);
+            if (child.linkStyle === 'dashed') path.setAttribute("stroke-dasharray", "8,4");
+            if (child.linkStyle === 'dotted') path.setAttribute("stroke-dasharray", "2,4");
+            container.appendChild(path);
+            if (child.prob) {
+                const midX = (node.x + child.x) / 2;
+                const midY = (node.y + child.y) / 2;
+                drawProbLabel(container, midX, midY, child.prob);
+            }
+            drawLinks(child, container);
+        });
+    }
+
+    function drawProbLabel(container, x, y, text) {
+        const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        const color = "#555";
+        const fontSize = CONFIG.fontSize; 
+        
+        if (text.includes('/')) {
+            const parts = text.split('/');
+            const width = Math.max(parts[0].length, parts[1].length) * (fontSize * 0.7) + 14;
+            const totalHeight = fontSize * 2.8; 
+            const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            bg.setAttribute("x", x - width/2); bg.setAttribute("y", y - totalHeight/2);
+            bg.setAttribute("width", width); bg.setAttribute("height", totalHeight);
+            bg.setAttribute("rx", 4); bg.setAttribute("fill", "#FFFFFF");
+            group.appendChild(bg);
+            const tNum = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            tNum.setAttribute("x", x); tNum.setAttribute("y", y - 5); 
+            tNum.setAttribute("text-anchor", "middle"); tNum.setAttribute("font-size", (fontSize * 0.9) + "px");
+            tNum.setAttribute("fill", color); tNum.textContent = parts[0];
+            group.appendChild(tNum);
+            const bar = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            bar.setAttribute("x1", x - width/2 + 4); bar.setAttribute("y1", y);
+            bar.setAttribute("x2", x + width/2 - 4); bar.setAttribute("y2", y);
+            bar.setAttribute("stroke", color); bar.setAttribute("stroke-width", "1.5");
+            group.appendChild(bar);
+            const tDen = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            tDen.setAttribute("x", x); tDen.setAttribute("y", y + fontSize + 2); 
+            tDen.setAttribute("text-anchor", "middle"); tDen.setAttribute("font-size", (fontSize * 0.9) + "px");
+            tDen.setAttribute("fill", color); tDen.textContent = parts[1];
+            group.appendChild(tDen);
+        } else {
+            const w = text.length * (fontSize * 0.7) + 10;
+            const h = fontSize + 8;
+            const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            bg.setAttribute("x", x - w/2); bg.setAttribute("y", y - h/2);
+            bg.setAttribute("width", w); bg.setAttribute("height", h);
+            bg.setAttribute("rx", 4); bg.setAttribute("fill", "#FFFFFF");
+            group.appendChild(bg);
+            const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            textEl.setAttribute("x", x); textEl.setAttribute("y", y); textEl.setAttribute("dy", "1px");
+            textEl.setAttribute("text-anchor", "middle"); textEl.setAttribute("dominant-baseline", "central");
+            textEl.setAttribute("font-size", fontSize + "px"); textEl.setAttribute("fill", color);
+            textEl.textContent = text;
+            group.appendChild(textEl);
+        }
+        container.appendChild(group);
+    }
+
+    function drawNodes(node, container) {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", "node");
+        g.onmousedown = (e) => { 
+            e.stopPropagation(); 
+            selectNode(node.id);
+            if (isDesignMode) dragNode = node; 
+        };
+        
+        if (node.id === selectedNodeId) {
+            const halo = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            halo.setAttribute("cx", node.x); halo.setAttribute("cy", node.y);
+            halo.setAttribute("r", CONFIG.nodeRadius + 4);
+            halo.setAttribute("fill", "none");
+            halo.setAttribute("stroke", "#3B82F6");
+            halo.setAttribute("stroke-width", "2");
+            halo.setAttribute("stroke-dasharray", "4,2");
+            halo.setAttribute("class", "selection-ring");
+            g.appendChild(halo);
+        }
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y);
+        circle.setAttribute("r", CONFIG.nodeRadius);
+        circle.setAttribute("fill", node.nodeFill || "#ffffff");
+        if (node.hasStroke !== false) {
+            circle.setAttribute("stroke", node.nodeStroke || "#333");
+            circle.setAttribute("stroke-width", node.nodeStrokeWidth || 2);
+        } else {
+            circle.setAttribute("stroke", "none");
+        }
+        g.appendChild(circle);
+        
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", node.x); label.setAttribute("y", node.y);
+        label.setAttribute("text-anchor", "middle"); label.setAttribute("dominant-baseline", "central");
+        label.setAttribute("font-weight", "600"); label.setAttribute("font-size", CONFIG.fontSize + "px");
+        label.setAttribute("fill", node.textColor || "#333");
+        if (node.bar) label.setAttribute("text-decoration", "overline");
+        let t = node.name;
+        if(t.length > 5) t = t.substring(0,4) + ".";
+        label.textContent = t;
+        g.appendChild(label);
+        
+        container.appendChild(g);
+        if (node.children) node.children.forEach(c => drawNodes(c, container));
+    }
+
+    function selectNode(id) {
+        selectedNodeId = id;
+        const node = findNode(treeData, id);
+        document.getElementById('no-selection').style.display = 'none';
+        document.getElementById('selection-controls').style.display = 'flex';
+        
+        const titleEl = document.getElementById('panel-title');
+        if (titleEl) titleEl.innerText = "Propriétés : " + node.name;
+
+        document.getElementById('inputName').value = node.name;
+        document.getElementById('inputProb').value = node.prob;
+        document.getElementById('inputLinkWidth').value = node.linkWidth || 2;
+        document.getElementById('inputLinkStyle').value = node.linkStyle || "solid";
+        document.getElementById('inputNodeStrokeWidth').value = node.nodeStrokeWidth || 2;
+        document.getElementById('inputNodeStrokeCheck').checked = (node.hasStroke !== false);
+        document.getElementById('inputNodeBar').checked = (node.bar === true);
+        
+        draw();
+    }
+
+    function updateNodeProperty(prop, value) {
+        if(!selectedNodeId) return;
+        const node = findNode(treeData, selectedNodeId);
+        if(node) {
+            node[prop] = value;
+            if(prop === 'name') {
+                const t = document.getElementById('panel-title');
+                if(t) t.innerText = "Propriétés : " + value;
+            }
+            draw();
+        }
+    }
+
+    const safeBind = (id, event, prop, isCheck = false) => {
+        const el = document.getElementById(id);
+        if(el) {
+            el[event] = (e) => {
+                updateNodeProperty(prop, isCheck ? e.target.checked : e.target.value);
+                if(event === 'onchange') pushHistory();
+            };
+            if(event === 'oninput') {
+                el.onchange = () => pushHistory();
+            }
+        }
+    };
+    safeBind('inputName', 'oninput', 'name');
+    safeBind('inputProb', 'oninput', 'prob');
+    safeBind('inputLinkWidth', 'oninput', 'linkWidth');
+    safeBind('inputLinkStyle', 'onchange', 'linkStyle');
+    safeBind('inputNodeStrokeWidth', 'oninput', 'nodeStrokeWidth');
+    safeBind('inputNodeStrokeCheck', 'onchange', 'hasStroke', true);
+    safeBind('inputNodeBar', 'onchange', 'bar', true);
+
+    function findNode(node, id) {
+        if (node.id === id) return node;
+        if (node.children) {
+            for (let child of node.children) {
+                const f = findNode(child, id);
+                if (f) return f;
+            }
+        }
+        return null;
+    }
+
+    function addChild() {
+        if (!selectedNodeId) return;
+        const parent = findNode(treeData, selectedNodeId);
+        if (parent) {
+            if (!parent.children) parent.children = [];
+            parent.children.push({
+                id: nextId++, name: "N", prob: "0.5", 
+                nodeFill: parent.nodeFill, nodeStroke: parent.nodeStroke, 
+                nodeStrokeWidth: parent.nodeStrokeWidth, hasStroke: parent.hasStroke,
+                textColor: parent.textColor, bar: false,
+                linkColor: parent.nodeStroke, linkWidth: 2, linkStyle: "solid",
+                children: []
+            });
+
+            if (isDesignMode) {
+                const child = parent.children[parent.children.length - 1];
+                child.x = parent.x + 80; child.y = parent.y + 40;
+                draw();
+            } else {
+                forceAutoLayout(false); 
+            }
+            pushHistory();
+        }
+    }
+
+    function deleteNode() {
+        if (!selectedNodeId || selectedNodeId === 1) return;
+        function remove(parent, id) {
+            if (!parent.children) return false;
+            const idx = parent.children.findIndex(c => c.id === id);
+            if (idx !== -1) { parent.children.splice(idx, 1); return true; }
+            return parent.children.some(c => remove(c, id));
+        }
+        remove(treeData, selectedNodeId);
+        selectedNodeId = null;
+        document.getElementById('selection-controls').style.display = 'none';
+        document.getElementById('no-selection').style.display = 'block';
+        if (isDesignMode) draw();
+        else forceAutoLayout(false);
+        pushHistory();
+    }
+
+    function initPalette(containerId, property) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        PRESETS.forEach(color => {
+            const div = document.createElement('div');
+            div.className = 'swatch';
+            if(color === '#FFFFFF') div.classList.add('white-swatch');
+            div.style.backgroundColor = color;
+            div.onclick = () => { updateNodeProperty(property, color); pushHistory(); };
+            container.appendChild(div);
+        });
+        const customDiv = document.createElement('div');
+        customDiv.className = 'swatch swatch-custom';
+        const input = document.createElement('input');
+        input.type = 'color';
+        input.className = 'hidden-color-input';
+        input.oninput = (e) => {
+            customDiv.style.background = e.target.value; 
+            updateNodeProperty(property, e.target.value);
+        };
+        input.onchange = () => pushHistory();
+        customDiv.appendChild(input);
+        container.appendChild(customDiv);
+    }
+
+    function getCleanExportSvg() {
+        const group = document.getElementById('mainGroup');
+        const bbox = group.getBBox();
+        const padding = 60;
+        const rawSvg = document.getElementById('treeSvg');
+        const clone = rawSvg.cloneNode(true);
+        const cloneMain = clone.getElementById('mainGroup');
+        clone.innerHTML = ''; 
+        clone.appendChild(cloneMain);
+        clone.setAttribute("viewBox", `${bbox.x - padding} ${bbox.y - padding} ${bbox.width + padding*2} ${bbox.height + padding*2}`);
+        clone.setAttribute("width", bbox.width + padding*2);
+        clone.setAttribute("height", bbox.height + padding*2);
+        const rings = clone.querySelectorAll('.selection-ring');
+        rings.forEach(ring => ring.remove());
+        return clone;
+    }
+
+    function exportSVG() {
+        const clone = getCleanExportSvg();
+        const serializer = new XMLSerializer();
+        let source = serializer.serializeToString(clone);
+        if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
+            source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+        }
+        const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+        const link = document.createElement("a");
+        link.download = "arbre.svg"; link.href = url;
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    }
+
+    function exportPNG() {
+        const clone = getCleanExportSvg();
+        const svgData = new XMLSerializer().serializeToString(clone);
+        const canvas = document.createElement("canvas");
+        const w = parseFloat(clone.getAttribute("width"));
+        const h = parseFloat(clone.getAttribute("height"));
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        const img = new Image();
+        const blob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        img.onload = function() {
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0);
+            const a = document.createElement("a");
+            a.download = "arbre.png"; a.href = canvas.toDataURL("image/png");
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+        img.src = url;
+    }
+
+    async function copyToClipboard() {
+        const clone = getCleanExportSvg();
+        const svgData = new XMLSerializer().serializeToString(clone);
+        const canvas = document.createElement("canvas");
+        const w = parseFloat(clone.getAttribute("width"));
+        const h = parseFloat(clone.getAttribute("height"));
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        const img = new Image();
+        const blob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const btn = document.getElementById('btnCopy');
+        const originalText = btn.innerText;
+        img.onload = function() {
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0);
+            canvas.toBlob(function(blob) {
+                navigator.clipboard.write([new ClipboardItem({'image/png': blob})])
+                .then(() => {
+                    btn.innerText = "Copié !";
+                    btn.style.background = "#dcfce7";
+                    setTimeout(() => { btn.innerText = originalText; btn.style.background = ""; }, 2000);
+                })
+                .catch(err => alert("Erreur copie : " + err));
+            });
+        };
+        img.src = url;
+    }
+</script>
+</body>
+</html>
