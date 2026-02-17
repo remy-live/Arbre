@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Arbre Studio - V25 (Donate Header)</title>
+    <title>Arbre Studio</title>
     <style>
         :root {
             --bg-canvas: #FFFFFF;
@@ -12,9 +12,8 @@
             --text-muted: #6B7280;
             --border-color: #E5E7EB;
             --accent: #3B82F6;
-            --radius: 8px;
+            --radius: 6px;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-canvas);
@@ -25,64 +24,58 @@
             height: 100vh;
             overflow: hidden;
             user-select: none;
+            font-size: 0.9rem;
         }
-
         /* --- HEADER --- */
         header {
             background: var(--bg-panel);
-            padding: 0 15px;
+            padding: 0 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
             z-index: 30;
-            height: 60px;
+            height: 50px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            flex-shrink: 0;
         }
-
-        h1 { font-size: 1.1rem; margin: 0; color: var(--text-main); font-weight: 700; }
-        
-        .toolbar { display: flex; gap: 8px; align-items: center; }
-        .separator { width: 1px; height: 20px; background: #E5E7EB; margin: 0 2px; }
-
+        h1 { font-size: 1rem; margin: 0; color: var(--text-main); font-weight: 700; }
+        .toolbar { display: flex; gap: 6px; align-items: center; }
+        .separator { width: 1px; height: 16px; background: #E5E7EB; margin: 0 2px; }
         button {
-            padding: 6px 12px;
+            padding: 4px 10px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 4px;
             background: #fff;
             color: var(--text-main);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             font-weight: 500;
             transition: all 0.2s;
-            display: flex; align-items: center; gap: 5px;
+            display: flex; align-items: center; gap: 4px;
+            height: 28px;
         }
         button:hover { background: #F9FAFB; border-color: #D1D5DB; }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
-        
         button.primary { background: var(--text-main); color: white; border: none; }
         button.primary:hover { opacity: 0.9; }
-        
         button.action-btn { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
         button.action-btn:hover { background: #dcfce7; }
-
-        /* BOUTON DONATE (Discret Header) */
         button.donate-btn { border-color: #fecaca; color: #e11d48; background: #fff1f2; }
         button.donate-btn:hover { background: #ffe4e6; border-color: #fda4af; }
-
-        /* BOUTON MODE DESIGN */
-        button#btnDesignMode { border-width: 2px; }
         button#btnDesignMode.active {
             background: #ECFDF5;
             border-color: #10B981;
             color: #047857;
             font-weight: bold;
         }
-
+        button#btnToggleDot.active {
+            background: #10B981;
+            border-color: #059669;
+            color: white;
+        }
         /* --- LAYOUT --- */
         #workspace { display: flex; flex: 1; overflow: hidden; }
-
-        /* --- SIDEBARS --- */
         .sidebar {
             background: var(--bg-panel);
             display: flex;
@@ -92,27 +85,26 @@
             padding: 0;
             flex-shrink: 0;
         }
-        .sidebar-left { width: 300px; border-right: 1px solid var(--border-color); }
-        .sidebar-right { width: 360px; border-left: 1px solid var(--border-color); }
-
+        .sidebar-left { width: 280px; border-right: 1px solid var(--border-color); }
+        .sidebar-right { width: 340px; border-left: 1px solid var(--border-color); }
         .panel-header {
-            padding: 15px 20px;
+            padding: 10px 15px;
             border-bottom: 1px solid var(--border-color);
             background: #fff;
             position: sticky; top: 0; z-index: 10;
         }
         .panel-title {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             color: var(--text-muted);
             margin: 0;
         }
-
-        .panel-content { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
-
-        /* --- CANVAS --- */
+        .panel-content { 
+            padding: 10px; 
+            display: flex; flex-direction: column; gap: 8px; 
+        }
         #canvas-wrapper {
             flex: 1;
             position: relative;
@@ -121,7 +113,6 @@
             cursor: default;
         }
         #canvas-wrapper.panning { cursor: grabbing; }
-
         #canvas-bg {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background-image: radial-gradient(#CBD5E1 1.5px, transparent 1.5px);
@@ -129,79 +120,80 @@
             opacity: 0.5;
             pointer-events: none;
         }
-
         /* --- UI COMPONENTS --- */
         .settings-group {
             background: var(--bg-section);
             border-radius: var(--radius);
-            padding: 15px;
+            padding: 8px 10px;
             border: 1px solid transparent;
         }
-        
         .control-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
-            gap: 10px;
+            margin-bottom: 6px;
+            gap: 8px;
         }
         .control-row:last-child { margin-bottom: 0; }
-        .control-col { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
-
-        label { font-size: 0.85rem; color: var(--text-main); font-weight: 500; }
-        .label-sm { font-size: 0.8rem; color: var(--text-muted); min-width: 60px; }
-
+        .control-col { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+        label { font-size: 0.75rem; color: var(--text-main); font-weight: 600; }
+        .label-sm { font-size: 0.75rem; color: var(--text-muted); }
         input[type="text"], input[type="number"], select {
-            width: 100%; padding: 8px 10px; border: 1px solid #D1D5DB; border-radius: 6px;
-            font-size: 0.9rem; background: #fff; box-sizing: border-box;
+            width: 100%; padding: 2px 6px; border: 1px solid #D1D5DB; border-radius: 4px;
+            font-size: 0.85rem; background: #fff; box-sizing: border-box; height: 26px;
         }
-        
-        input[type="range"] { width: 100%; cursor: pointer; }
-
-        .checkbox-wrapper { display: flex; align-items: center; gap: 8px; }
-        input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
-
+        input[type="range"] { width: 100%; cursor: pointer; height: 20px; }
+        .checkbox-wrapper { display: flex; align-items: center; gap: 4px; font-size: 0.8rem;}
+        input[type="checkbox"] { width: 14px; height: 14px; margin: 0; cursor: pointer; }
         .bar-toggle {
             display: flex; align-items: center; gap: 4px;
-            background: #fff; border: 1px solid #D1D5DB; padding: 4px 8px; border-radius: 6px;
-            cursor: pointer;
+            background: #fff; border: 1px solid #D1D5DB; padding: 0 6px; border-radius: 4px;
+            cursor: pointer; height: 26px;
         }
         .bar-toggle:hover { border-color: var(--accent); }
-        .bar-symbol { font-family: serif; font-weight: bold; text-decoration: overline; font-size: 1.1rem; line-height: 1; }
-
+        .bar-symbol { font-family: serif; font-weight: bold; text-decoration: overline; font-size: 1rem; line-height: 1; }
+        /* PALETTE COMPACTE */
         .palette-grid {
-            display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; width: 100%;
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 2px; 
+            width: 100%;
         }
         .swatch {
-            width: 100%; aspect-ratio: 1/1; border-radius: 3px; cursor: pointer;
-            border: 1px solid #000000; box-sizing: border-box; transition: transform 0.1s;
+            width: 16px; height: 16px;
+            border-radius: 2px; cursor: pointer; flex-shrink: 0;
+            border: 1px solid #E5E7EB; box-sizing: border-box; transition: transform 0.1s;
+            position: relative; overflow: hidden;
         }
-        .swatch:hover { transform: scale(1.3); z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .swatch:hover { transform: scale(1.4); z-index: 10; border-color: #9CA3AF; }
         .swatch.white-swatch { background: #fff; }
-        .swatch-custom { background: linear-gradient(135deg, #E5E7EB, #9CA3AF); position: relative; }
+        .swatch-none { background: #fff; }
+        .swatch-none::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top right, transparent 45%, #EF4444 45%, #EF4444 55%, transparent 55%);
+        }
+        .swatch-none::before { content: "🚫"; font-size: 8px; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; opacity: 0; }
+        .swatch-custom { background: linear-gradient(135deg, #E5E7EB, #9CA3AF); }
         .hidden-color-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-
-        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .btn-add { background: #10B981; color: white; border: none; }
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
+        .btn-add { background: #10B981; color: white; border: none; justify-content: center; }
         .btn-add:hover { background: #059669; }
-        .btn-del { background: #EF4444; color: white; border: none; }
+        .btn-del { background: #EF4444; color: white; border: none; justify-content: center;}
         .btn-del:hover { background: #DC2626; }
-
         /* SVG STYLES */
         text { user-select: none; pointer-events: none; }
         .node { cursor: pointer; }
         body.design-mode-active .node { cursor: grab; }
         body.design-mode-active .node:active { cursor: grabbing; }
-        .node circle { transition: stroke-width 0.1s; }
-        .node:hover circle { stroke-opacity: 0.7; }
-        .node.selected circle { stroke-dasharray: 6 3; stroke-opacity: 0.8; }
-        .selection-ring { pointer-events: none; }
-
+        .node circle.main-circle { transition: stroke-width 0.1s; }
+        .node:hover circle.main-circle { stroke-opacity: 0.7; }
+        .node.selected circle.selection-ring { stroke-dasharray: 6 3; stroke-opacity: 0.8; display: block;}
+        .selection-ring { pointer-events: none; display: none; }
         /* --- MODALE DONATE --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 100;
-            display: none; /* Caché par défaut */
+            display: none; 
             justify-content: center; align-items: center;
             backdrop-filter: blur(2px);
         }
@@ -213,25 +205,13 @@
         .modal-box h3 { margin-top: 0; color: #1F2937; margin-bottom: 10px; }
         .modal-box p { color: #6B7280; font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px; }
         .modal-actions { display: flex; gap: 10px; justify-content: center; }
-        
-        .btn-paypal {
-            background: #0070ba; color: white; text-decoration: none;
-            padding: 8px 16px; border-radius: 6px; font-weight: 500; font-size: 0.9rem;
-            display: inline-block;
-        }
+        .btn-paypal { background: #0070ba; color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-weight: 500; display: inline-block; }
         .btn-paypal:hover { background: #005ea6; }
-        
-        .btn-cancel {
-            background: #F3F4F6; color: #4B5563; border: none;
-            padding: 8px 16px; border-radius: 6px; cursor: pointer;
-            font-size: 0.9rem;
-        }
+        .btn-cancel { background: #F3F4F6; color: #4B5563; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
         .btn-cancel:hover { background: #E5E7EB; }
-
     </style>
 </head>
 <body>
-
 <header>
     <h1>🌳 Arbre Studio</h1>
     <div class="toolbar">
@@ -241,27 +221,23 @@
         <button onclick="saveProject()" title="Sauvegarder">💾</button>
         <button onclick="document.getElementById('fileInput').click()" title="Ouvrir">📂</button>
         <input type="file" id="fileInput" accept=".json" style="display:none" onchange="loadProject(this)">
-        
         <div class="separator"></div>
-
         <button onclick="centerView()" title="Recentrer">🎯</button>
-        <button id="btnDesignMode" onclick="toggleDesignMode()">🔓 Mode Design</button>
-        
+        <button id="btnDesignMode" onclick="toggleDesignMode()">🔓 Design</button>
         <div class="separator"></div>
-        
-        <button class="donate-btn" onclick="openDonateModal()" title="Soutenir le projet">❤️</button>
+        <button id="btnToggleDot" onclick="toggleAutoDotMode()" title="Basculer Mode Puce / Mode Classique">✨ Mode Puce</button>
+        <div class="separator"></div>
+        <button class="donate-btn" onclick="openDonateModal()" title="Soutenir">❤️</button>
         <div class="separator"></div>
         <button class="copy-btn" id="btnCopy" onclick="copyToClipboard()">📋 Copier</button>
         <button onclick="exportSVG()">SVG</button>
         <button class="primary" onclick="exportPNG()">PNG</button>
     </div>
 </header>
-
 <div id="workspace">
-    
     <aside class="sidebar sidebar-left">
         <div class="panel-header">
-            <h2 class="panel-title">Configuration Globale</h2>
+            <h2 class="panel-title">Config. Globale</h2>
         </div>
         <div class="panel-content">
             <div class="settings-group">
@@ -277,24 +253,23 @@
                     </select>
                 </div>
                 <div class="control-row">
-                    <label>Taille Texte</label>
-                    <input type="number" id="globalFontSize" value="14" min="8" max="24" oninput="saveAndDraw()" style="width: 70px;">
+                    <label>Taille Txt</label>
+                    <input type="number" id="globalFontSize" value="14" min="8" max="24" oninput="saveAndDraw()" style="width: 50px;">
                 </div>
                 <div class="control-row">
-                    <label>Orientation (Auto)</label>
-                    <button onclick="toggleOrientation()" id="btnOrientation" style="font-size:0.8rem; padding:6px 10px;">Horizontal</button>
+                    <label>Orientation</label>
+                    <button onclick="toggleOrientation()" id="btnOrientation" style="font-size:0.75rem;">Horizontal</button>
                 </div>
                 <div class="control-row">
                     <label>Lignes</label>
-                    <select id="globalLineType" onchange="saveAndDraw()" style="width: 100px;">
+                    <select id="globalLineType" onchange="saveAndDraw()" style="width: 90px;">
                         <option value="curve">Courbes</option>
                         <option value="straight">Droites</option>
                     </select>
                 </div>
             </div>
-
             <div class="settings-group">
-                <span class="label-sm" style="display:block; margin-bottom:10px; color:#aaa;">Espacement (Auto)</span>
+                <span class="label-sm" style="display:block; margin-bottom:5px;">Espacement</span>
                 <div class="control-col">
                     <div class="control-row">
                         <label>Largeur</label>
@@ -307,20 +282,18 @@
                         <input type="range" id="sliderSiblingGap" min="40" max="200" value="80" onchange="pushHistory()" oninput="updateLayoutAndDraw()">
                     </div>
                 </div>
-                <div class="control-row" style="margin-top:10px;">
-                    <button onclick="forceAutoLayoutWithHistory()" style="width:100%; justify-content:center;">⚡ Réorganiser l'arbre</button>
+                <div class="control-row" style="margin-top:5px;">
+                    <button onclick="forceAutoLayoutWithHistory()" style="width:100%; justify-content:center;">⚡ Réorganiser</button>
                 </div>
             </div>
-
             <div class="settings-group">
                 <div class="control-row">
-                    <label>Taille des Bulles</label>
-                    <input type="number" id="globalNodeRadius" value="24" min="10" max="60" oninput="saveAndDraw()" style="width: 70px;">
+                    <label>Taille Bulles</label>
+                    <input type="number" id="globalNodeRadius" value="24" min="10" max="60" oninput="saveAndDraw()" style="width: 50px;">
                 </div>
             </div>
         </div>
     </aside>
-
     <div id="canvas-wrapper">
         <div id="canvas-bg"></div>
         <svg id="treeSvg" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -329,22 +302,19 @@
             </g>
         </svg>
     </div>
-
     <aside class="sidebar sidebar-right">
         <div class="panel-header">
             <h2 class="panel-title" id="panel-title">Propriétés</h2>
         </div>
-        
-        <div id="no-selection" style="padding: 50px 20px; text-align: center; color: #9CA3AF;">
-            Cliquez sur un élément pour l'éditer.
+        <div id="no-selection" style="padding: 50px 20px; text-align: center; color: #9CA3AF; font-size: 0.85rem;">
+            Sélectionnez un élément.
         </div>
-
         <div id="selection-controls" style="display: none;" class="panel-content">
             <div class="settings-group">
                 <div class="control-row">
                     <label class="label-sm">Nom</label>
-                    <div style="flex:1; display:flex; gap:8px; align-items:center;">
-                        <input type="text" id="inputName" placeholder="Ex: A">
+                    <div style="flex:1; display:flex; gap:6px; align-items:center;">
+                        <input type="text" id="inputName" placeholder="A">
                         <label class="bar-toggle" title="Événement contraire">
                             <span class="bar-symbol">A̅</span>
                             <input type="checkbox" id="inputNodeBar">
@@ -352,52 +322,60 @@
                     </div>
                 </div>
                 <div class="control-col">
-                    <label class="label-sm">Couleur Texte</label>
+                    <label class="label-sm">Texte</label>
                     <div id="palette-text" class="palette-grid"></div>
                 </div>
-                <div class="control-col">
-                    <label class="label-sm">Couleur Fond</label>
+                <div class="control-row" style="margin-top: 6px;">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                         <label class="label-sm">Taille</label>
+                         <input type="number" id="inputNodeFontSize" placeholder="Auto" min="8" max="40" style="width:45px;">
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="inputStartDot">
+                        <label for="inputStartDot" style="font-size:0.8rem; cursor:pointer;">Puce (•)</label>
+                    </div>
+                </div>
+                <div class="control-col" style="margin-top:6px;">
+                    <label class="label-sm">Fond</label>
                     <div id="palette-node-fill" class="palette-grid"></div>
                 </div>
-                <div class="control-row" style="margin-top:10px;">
+                <div class="control-row" style="margin-top:6px;">
                     <label class="label-sm">Contour</label>
                     <div class="checkbox-wrapper">
                         <input type="checkbox" id="inputNodeStrokeCheck">
-                        <input type="number" id="inputNodeStrokeWidth" min="1" max="10" value="2" style="width:60px;">
+                        <input type="number" id="inputNodeStrokeWidth" min="1" max="10" value="2" style="width:45px;">
                     </div>
                 </div>
-                <div id="palette-node-stroke" class="palette-grid" style="margin-bottom: 10px;"></div>
+                <div id="palette-node-stroke" class="palette-grid" style="margin-bottom: 4px;"></div>
             </div>
-
             <div class="settings-group">
                 <div class="control-row">
-                    <label class="label-sm">Proba</label>
-                    <input type="text" id="inputProb" placeholder="Ex: 1/4">
+                    <label class="label-sm">Probabilité</label>
+                    <input type="text" id="inputProb" placeholder="Ex: 1/4" style="width: 100px;">
                 </div>
-                <div class="control-row">
-                    <label class="label-sm">Style</label>
-                    <input type="number" id="inputLinkWidth" min="1" max="10" value="2" style="width:50px;">
-                    <select id="inputLinkStyle">
-                        <option value="solid">Plein</option>
-                        <option value="dashed">Tirets</option>
-                        <option value="dotted">Points</option>
-                    </select>
-                </div>
-                <div class="control-col">
-                    <label class="label-sm">Couleur</label>
+                <div class="control-col" style="margin-top:6px;">
+                    <label class="label-sm">Couleur Lien</label>
                     <div id="palette-link" class="palette-grid"></div>
                 </div>
+                <div class="control-row" style="margin-top:6px;">
+                    <div style="display:flex; gap:4px; align-items:center; width:100%;">
+                        <label class="label-sm">Style</label>
+                        <input type="number" id="inputLinkWidth" min="1" max="10" value="2" style="width:45px;">
+                        <select id="inputLinkStyle" style="width: 100%;">
+                            <option value="solid">Plein</option>
+                            <option value="dashed">Tiret</option>
+                            <option value="dotted">Point</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-
             <div class="actions">
                 <button class="btn-add" onclick="addChild()">+ Enfant</button>
                 <button class="btn-del" onclick="deleteNode()">Supprimer</button>
             </div>
         </div>
     </aside>
-
 </div>
-
 <div id="donateModal" class="modal-overlay">
     <div class="modal-box">
         <h3>Soutenir le projet ❤️</h3>
@@ -413,28 +391,24 @@
         </div>
     </div>
 </div>
-
 <script>
     const PRESETS = ['#1F2937','#FFFFFF','#9CA3AF','#EF4444','#F97316','#EAB308','#84CC16','#22C55E','#06B6D4','#3B82F6','#6366F1','#A855F7','#EC4899','#78350F'];
-
-    // DATA INITIAL
     let treeData = {
         id: 1, name: "Départ", prob: "", 
         nodeFill: "#FFFFFF", nodeStroke: "#1F2937", nodeStrokeWidth: 2, hasStroke: true, textColor: "#1F2937", bar: false,
+        startDot: false, fontSize: null,
         linkColor: "#1F2937", linkWidth: 2, linkStyle: "solid",
         children: [
-            { id: 2, name: "S", prob: "3/4", nodeFill: "#FFFFFF", nodeStroke: "#1F2937", nodeStrokeWidth: 2, hasStroke: true, textColor: "#1F2937", linkColor: "#1F2937", linkWidth: 2, linkStyle: "solid", children: [] },
-            { id: 3, name: "E", prob: "1/4", nodeFill: "#FFFFFF", nodeStroke: "#D97706", nodeStrokeWidth: 2, hasStroke: true, textColor: "#D97706", linkColor: "#D97706", linkWidth: 2, linkStyle: "solid", children: [] }
+            { id: 2, name: "S", prob: "3/4", nodeFill: "#FFFFFF", nodeStroke: "#1F2937", nodeStrokeWidth: 2, hasStroke: true, textColor: "#1F2937", startDot: false, fontSize: null, linkColor: "#1F2937", linkWidth: 2, linkStyle: "solid", children: [] },
+            { id: 3, name: "E", prob: "1/4", nodeFill: "#FFFFFF", nodeStroke: "#D97706", nodeStrokeWidth: 2, hasStroke: true, textColor: "#D97706", startDot: false, fontSize: null, linkColor: "#D97706", linkWidth: 2, linkStyle: "solid", children: [] }
         ]
     };
-
     let nextId = 4;
     let selectedNodeId = null;
     let isDesignMode = false;
+    let isDotModeActive = false; 
     let view = { x: 0, y: 0, scale: 1, isPanning: false, startX: 0, startY: 0 };
     let dragNode = null; 
-
-    // CONFIG
     let CONFIG = {
         orientation: 'horizontal',
         fontFamily: 'Arial, sans-serif',
@@ -444,11 +418,9 @@
         levelGap: 200,
         siblingGap: 80
     };
-
     let historyStack = [];
     let historyIndex = -1;
     const MAX_HISTORY = 50;
-
     window.onload = () => {
         initPalette('palette-node-fill', 'nodeFill');
         initPalette('palette-node-stroke', 'nodeStroke');
@@ -459,46 +431,47 @@
         setTimeout(centerView, 50);
         pushHistory(); 
     };
-
-    // --- DONATE MODAL ---
     function openDonateModal() { document.getElementById('donateModal').style.display = 'flex'; }
     function closeDonateModal() { document.getElementById('donateModal').style.display = 'none'; }
     document.getElementById('donateModal').addEventListener('click', (e) => {
         if(e.target.id === 'donateModal') closeDonateModal();
     });
-
-    // --- HISTORY ---
     function pushHistory() {
         if (historyIndex < historyStack.length - 1) {
             historyStack = historyStack.slice(0, historyIndex + 1);
         }
-        const state = JSON.stringify({ tree: treeData, config: CONFIG, nextId: nextId });
+        const state = JSON.stringify({ tree: treeData, config: CONFIG, nextId: nextId, dotMode: isDotModeActive });
         historyStack.push(state);
         if (historyStack.length > MAX_HISTORY) historyStack.shift();
         historyIndex = historyStack.length - 1;
         updateHistoryButtons();
     }
-
     function undo() {
         if (historyIndex > 0) {
             historyIndex--;
             restoreState(historyStack[historyIndex]);
         }
     }
-
     function redo() {
         if (historyIndex < historyStack.length - 1) {
             historyIndex++;
             restoreState(historyStack[historyIndex]);
         }
     }
-
     function restoreState(jsonState) {
         const state = JSON.parse(jsonState);
         treeData = state.tree;
         CONFIG = state.config;
         nextId = state.nextId;
-        
+        isDotModeActive = state.dotMode || false;
+        const btn = document.getElementById('btnToggleDot');
+        if(isDotModeActive) {
+            btn.classList.add('active');
+            btn.innerHTML = "✨ Puce : ON";
+        } else {
+            btn.classList.remove('active');
+            btn.innerHTML = "✨ Mode Puce";
+        }
         document.getElementById('globalFont').value = CONFIG.fontFamily;
         document.getElementById('globalFontSize').value = CONFIG.fontSize;
         document.getElementById('globalNodeRadius').value = CONFIG.nodeRadius;
@@ -506,35 +479,28 @@
         document.getElementById('sliderLevelGap').value = CONFIG.levelGap || 200;
         document.getElementById('sliderSiblingGap').value = CONFIG.siblingGap || 80;
         document.getElementById('btnOrientation').innerText = (CONFIG.orientation === 'horizontal') ? 'Horizontal' : 'Vertical';
-
         if (selectedNodeId) selectNode(selectedNodeId);
         else document.getElementById('selection-controls').style.display = 'none';
-
         draw();
         updateHistoryButtons();
     }
-
     function updateHistoryButtons() {
         document.getElementById('btnUndo').disabled = (historyIndex <= 0);
         document.getElementById('btnRedo').disabled = (historyIndex >= historyStack.length - 1);
     }
-
     function saveAndDraw() {
         updateGlobalConfig(false);
         draw();
         pushHistory();
     }
-
-    // --- SAVE / LOAD ---
     function saveProject() {
-        const projectData = { tree: treeData, config: CONFIG, nextId: nextId, version: "V25" };
+        const projectData = { tree: treeData, config: CONFIG, nextId: nextId, dotMode: isDotModeActive, version: "V31" };
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projectData));
         const link = document.createElement("a");
         link.href = dataStr;
         link.download = "projet_arbre.json";
         document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
-
     function loadProject(input) {
         const file = input.files[0];
         if (!file) return;
@@ -557,22 +523,49 @@
         reader.readAsText(file);
         input.value = '';
     }
-
-    // --- LOGIC ---
+    function toggleAutoDotMode() {
+        isDotModeActive = !isDotModeActive;
+        const btn = document.getElementById('btnToggleDot');
+        function applyStyle(node, isDot) {
+            if (isDot) {
+                node.nodeFill = 'transparent';
+                node.nodeStroke = 'transparent'; 
+                node.hasStroke = false;
+                node.startDot = true;
+            } else {
+                node.nodeFill = '#FFFFFF';
+                node.nodeStroke = '#1F2937';
+                node.nodeStrokeWidth = 2;
+                node.hasStroke = true;
+                node.startDot = false;
+            }
+            if (node.children) node.children.forEach(c => applyStyle(c, isDot));
+        }
+        applyStyle(treeData, isDotModeActive);
+        if(isDotModeActive) {
+            btn.classList.add('active');
+            btn.innerHTML = "✨ Puce : ON";
+        } else {
+            btn.classList.remove('active');
+            btn.innerHTML = "✨ Mode Puce";
+        }
+        draw();
+        if (selectedNodeId) selectNode(selectedNodeId);
+        pushHistory();
+    }
     function toggleDesignMode() {
         isDesignMode = !isDesignMode;
         const btn = document.getElementById('btnDesignMode');
         if (isDesignMode) {
             btn.classList.add('active');
-            btn.innerHTML = "🔓 Mode Design (ON)";
+            btn.innerHTML = "🔓 Design (ON)";
             document.body.classList.add('design-mode-active');
         } else {
             btn.classList.remove('active');
-            btn.innerHTML = "🔓 Mode Design";
+            btn.innerHTML = "🔓 Design";
             document.body.classList.remove('design-mode-active');
         }
     }
-
     function setupInteractions() {
         const wrapper = document.getElementById('canvas-wrapper');
         wrapper.addEventListener('mousedown', (e) => {
@@ -616,7 +609,6 @@
             updateTransform();
         });
     }
-
     function updateTransform() {
         const g = document.getElementById('viewport');
         g.setAttribute('transform', `translate(${view.x}, ${view.y}) scale(${view.scale})`);
@@ -624,7 +616,6 @@
         bg.style.backgroundSize = `${24 * view.scale}px ${24 * view.scale}px`;
         bg.style.backgroundPosition = `${view.x}px ${view.y}px`;
     }
-
     function getSVGPoint(clientX, clientY) {
         const rect = document.getElementById('canvas-wrapper').getBoundingClientRect();
         return {
@@ -632,7 +623,6 @@
             y: (clientY - rect.top - view.y) / view.scale
         };
     }
-
     function centerView() {
         const group = document.getElementById('mainGroup');
         const bbox = group.getBBox();
@@ -651,14 +641,11 @@
         view.y = (h/2) - (bbox.y + bbox.height/2) * newScale;
         updateTransform();
     }
-
     function updateLayoutAndDraw() { forceAutoLayout(false); }
-
     function forceAutoLayoutWithHistory() {
         forceAutoLayout(true);
         pushHistory();
     }
-
     function forceAutoLayout(shouldCenter = true) {
         CONFIG.levelGap = parseInt(document.getElementById('sliderLevelGap').value);
         CONFIG.siblingGap = parseInt(document.getElementById('sliderSiblingGap').value);
@@ -666,7 +653,6 @@
         draw(); 
         if (shouldCenter) setTimeout(centerView, 10);
     }
-
     function calculateLayoutRecursive(node, depth, counter, lGap, sGap) {
         const isHoriz = document.getElementById('btnOrientation').innerText === 'Horizontal';
         const primary = depth * lGap;
@@ -686,14 +672,12 @@
             node.y = isHoriz ? midPoint : primary;
         }
     }
-
     function toggleOrientation() {
         const btn = document.getElementById('btnOrientation');
         CONFIG.orientation = (CONFIG.orientation === 'horizontal') ? 'vertical' : 'horizontal';
         btn.innerText = (CONFIG.orientation === 'horizontal') ? 'Horizontal' : 'Vertical';
         forceAutoLayoutWithHistory();
     }
-
     function updateGlobalConfig(redraw = true) {
         CONFIG.fontFamily = document.getElementById('globalFont').value;
         CONFIG.fontSize = parseInt(document.getElementById('globalFontSize').value);
@@ -701,7 +685,6 @@
         CONFIG.lineType = document.getElementById('globalLineType').value;
         if(redraw) draw();
     }
-
     function draw() {
         const svgGroup = document.getElementById('mainGroup');
         svgGroup.innerHTML = '';
@@ -710,23 +693,47 @@
         drawLinks(treeData, svgGroup);
         drawNodes(treeData, svgGroup);
     }
-
     function drawLinks(node, container) {
         if (!node.children) return;
         node.children.forEach(child => {
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            let hasDot = (node.startDot === true && node.children && node.children.length > 0);
+            let startX, startY;
+            if (hasDot) {
+                if (CONFIG.orientation === 'horizontal') {
+                    startX = node.x + CONFIG.nodeRadius; 
+                    startY = node.y;
+                } else {
+                    startX = node.x;
+                    startY = node.y + CONFIG.nodeRadius; 
+                }
+            } else {
+                startX = node.x;
+                startY = node.y;
+            }
+            let endX, endY;
+            if (child.nodeFill === 'transparent') {
+                if (CONFIG.orientation === 'horizontal') {
+                    endX = child.x - CONFIG.nodeRadius; 
+                    endY = child.y;
+                } else {
+                    endX = child.x;
+                    endY = child.y - CONFIG.nodeRadius; 
+                }
+            } else {
+                endX = child.x;
+                endY = child.y;
+            }
             let d = "";
             if (CONFIG.lineType === 'straight') {
-                d = `M ${node.x} ${node.y} L ${child.x} ${child.y}`;
+                d = `M ${startX} ${startY} L ${endX} ${endY}`;
             } else {
-                const dx = Math.abs(node.x - child.x);
-                const dy = Math.abs(node.y - child.y);
-                if (dx > dy) { 
-                    const midX = (node.x + child.x) / 2;
-                    d = `M ${node.x} ${node.y} C ${midX} ${node.y}, ${midX} ${child.y}, ${child.x} ${child.y}`;
+                if (CONFIG.orientation === 'horizontal') { 
+                    const midX = (startX + endX) / 2;
+                    d = `M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}`;
                 } else {
-                    const midY = (node.y + child.y) / 2;
-                    d = `M ${node.x} ${node.y} C ${node.x} ${midY}, ${child.x} ${midY}, ${child.x} ${child.y}`;
+                    const midY = (startY + endY) / 2;
+                    d = `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`;
                 }
             }
             path.setAttribute("d", d);
@@ -737,19 +744,17 @@
             if (child.linkStyle === 'dotted') path.setAttribute("stroke-dasharray", "2,4");
             container.appendChild(path);
             if (child.prob) {
-                const midX = (node.x + child.x) / 2;
-                const midY = (node.y + child.y) / 2;
+                const midX = (startX + endX) / 2;
+                const midY = (startY + endY) / 2;
                 drawProbLabel(container, midX, midY, child.prob);
             }
             drawLinks(child, container);
         });
     }
-
     function drawProbLabel(container, x, y, text) {
         const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
         const color = "#555";
         const fontSize = CONFIG.fontSize; 
-        
         if (text.includes('/')) {
             const parts = text.split('/');
             const width = Math.max(parts[0].length, parts[1].length) * (fontSize * 0.7) + 14;
@@ -791,63 +796,77 @@
         }
         container.appendChild(group);
     }
-
     function drawNodes(node, container) {
         const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
         g.setAttribute("class", "node");
+        if (node.id === selectedNodeId) g.classList.add('selected');
         g.onmousedown = (e) => { 
             e.stopPropagation(); 
             selectNode(node.id);
             if (isDesignMode) dragNode = node; 
         };
-        
-        if (node.id === selectedNodeId) {
-            const halo = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            halo.setAttribute("cx", node.x); halo.setAttribute("cy", node.y);
-            halo.setAttribute("r", CONFIG.nodeRadius + 4);
-            halo.setAttribute("fill", "none");
-            halo.setAttribute("stroke", "#3B82F6");
-            halo.setAttribute("stroke-width", "2");
-            halo.setAttribute("stroke-dasharray", "4,2");
-            halo.setAttribute("class", "selection-ring");
-            g.appendChild(halo);
-        }
+        const halo = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        halo.setAttribute("cx", node.x); halo.setAttribute("cy", node.y);
+        halo.setAttribute("r", CONFIG.nodeRadius + 4);
+        halo.setAttribute("fill", "none");
+        halo.setAttribute("stroke", "#3B82F6");
+        halo.setAttribute("stroke-width", "2");
+        halo.setAttribute("class", "selection-ring");
+        g.appendChild(halo);
         const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         circle.setAttribute("cx", node.x); circle.setAttribute("cy", node.y);
         circle.setAttribute("r", CONFIG.nodeRadius);
-        circle.setAttribute("fill", node.nodeFill || "#ffffff");
-        if (node.hasStroke !== false) {
+        circle.setAttribute("class", "main-circle");
+        if(node.nodeFill === 'transparent') {
+            circle.setAttribute("fill", "#FFFFFF");
+            circle.setAttribute("fill-opacity", "0"); 
+        } else {
+            circle.setAttribute("fill", node.nodeFill || "#ffffff");
+            circle.setAttribute("fill-opacity", "1");
+        }
+        if (node.hasStroke !== false && node.nodeStroke !== 'transparent') {
             circle.setAttribute("stroke", node.nodeStroke || "#333");
             circle.setAttribute("stroke-width", node.nodeStrokeWidth || 2);
         } else {
             circle.setAttribute("stroke", "none");
         }
         g.appendChild(circle);
-        
+        if (node.startDot === true && node.children && node.children.length > 0) {
+            let dotX, dotY;
+            if (CONFIG.orientation === 'horizontal') {
+                dotX = node.x + CONFIG.nodeRadius;
+                dotY = node.y;
+            } else {
+                dotX = node.x;
+                dotY = node.y + CONFIG.nodeRadius;
+            }
+            const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            dot.setAttribute("cx", dotX); dot.setAttribute("cy", dotY);
+            dot.setAttribute("r", 4);
+            dot.setAttribute("fill", "black");
+            dot.setAttribute("pointer-events", "none");
+            g.appendChild(dot);
+        }
         const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
         label.setAttribute("x", node.x); label.setAttribute("y", node.y);
         label.setAttribute("text-anchor", "middle"); label.setAttribute("dominant-baseline", "central");
-        label.setAttribute("font-weight", "600"); label.setAttribute("font-size", CONFIG.fontSize + "px");
+        label.setAttribute("font-weight", "600"); 
+        const currentFontSize = node.fontSize || CONFIG.fontSize;
+        label.setAttribute("font-size", currentFontSize + "px");
         label.setAttribute("fill", node.textColor || "#333");
         if (node.bar) label.setAttribute("text-decoration", "overline");
-        let t = node.name;
-        if(t.length > 5) t = t.substring(0,4) + ".";
-        label.textContent = t;
+        label.textContent = node.name;
         g.appendChild(label);
-        
         container.appendChild(g);
         if (node.children) node.children.forEach(c => drawNodes(c, container));
     }
-
     function selectNode(id) {
         selectedNodeId = id;
         const node = findNode(treeData, id);
         document.getElementById('no-selection').style.display = 'none';
         document.getElementById('selection-controls').style.display = 'flex';
-        
         const titleEl = document.getElementById('panel-title');
         if (titleEl) titleEl.innerText = "Propriétés : " + node.name;
-
         document.getElementById('inputName').value = node.name;
         document.getElementById('inputProb').value = node.prob;
         document.getElementById('inputLinkWidth').value = node.linkWidth || 2;
@@ -855,14 +874,17 @@
         document.getElementById('inputNodeStrokeWidth').value = node.nodeStrokeWidth || 2;
         document.getElementById('inputNodeStrokeCheck').checked = (node.hasStroke !== false);
         document.getElementById('inputNodeBar').checked = (node.bar === true);
-        
+        document.getElementById('inputStartDot').checked = (node.startDot === true);
+        document.getElementById('inputNodeFontSize').value = node.fontSize || "";
         draw();
     }
-
     function updateNodeProperty(prop, value) {
         if(!selectedNodeId) return;
         const node = findNode(treeData, selectedNodeId);
         if(node) {
+            if (prop === 'fontSize') {
+                value = (value === "" || value === 0) ? null : parseInt(value);
+            }
             node[prop] = value;
             if(prop === 'name') {
                 const t = document.getElementById('panel-title');
@@ -871,7 +893,6 @@
             draw();
         }
     }
-
     const safeBind = (id, event, prop, isCheck = false) => {
         const el = document.getElementById(id);
         if(el) {
@@ -891,7 +912,8 @@
     safeBind('inputNodeStrokeWidth', 'oninput', 'nodeStrokeWidth');
     safeBind('inputNodeStrokeCheck', 'onchange', 'hasStroke', true);
     safeBind('inputNodeBar', 'onchange', 'bar', true);
-
+    safeBind('inputStartDot', 'onchange', 'startDot', true);
+    safeBind('inputNodeFontSize', 'oninput', 'fontSize');
     function findNode(node, id) {
         if (node.id === id) return node;
         if (node.children) {
@@ -902,7 +924,6 @@
         }
         return null;
     }
-
     function addChild() {
         if (!selectedNodeId) return;
         const parent = findNode(treeData, selectedNodeId);
@@ -913,10 +934,11 @@
                 nodeFill: parent.nodeFill, nodeStroke: parent.nodeStroke, 
                 nodeStrokeWidth: parent.nodeStrokeWidth, hasStroke: parent.hasStroke,
                 textColor: parent.textColor, bar: false,
-                linkColor: parent.nodeStroke, linkWidth: 2, linkStyle: "solid",
+                startDot: parent.startDot, fontSize: null,
+                linkColor: parent.nodeStroke !== 'transparent' ? parent.nodeStroke : '#333',
+                linkWidth: 2, linkStyle: "solid",
                 children: []
             });
-
             if (isDesignMode) {
                 const child = parent.children[parent.children.length - 1];
                 child.x = parent.x + 80; child.y = parent.y + 40;
@@ -927,7 +949,6 @@
             pushHistory();
         }
     }
-
     function deleteNode() {
         if (!selectedNodeId || selectedNodeId === 1) return;
         function remove(parent, id) {
@@ -944,10 +965,14 @@
         else forceAutoLayout(false);
         pushHistory();
     }
-
     function initPalette(containerId, property) {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
+        const noneDiv = document.createElement('div');
+        noneDiv.className = 'swatch swatch-none';
+        noneDiv.title = 'Transparent / Aucune';
+        noneDiv.onclick = () => { updateNodeProperty(property, 'transparent'); pushHistory(); };
+        container.appendChild(noneDiv);
         PRESETS.forEach(color => {
             const div = document.createElement('div');
             div.className = 'swatch';
@@ -969,7 +994,6 @@
         customDiv.appendChild(input);
         container.appendChild(customDiv);
     }
-
     function getCleanExportSvg() {
         const group = document.getElementById('mainGroup');
         const bbox = group.getBBox();
@@ -986,7 +1010,6 @@
         rings.forEach(ring => ring.remove());
         return clone;
     }
-
     function exportSVG() {
         const clone = getCleanExportSvg();
         const serializer = new XMLSerializer();
@@ -999,7 +1022,6 @@
         link.download = "arbre.svg"; link.href = url;
         document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
-
     function exportPNG() {
         const clone = getCleanExportSvg();
         const svgData = new XMLSerializer().serializeToString(clone);
@@ -1022,7 +1044,6 @@
         };
         img.src = url;
     }
-
     async function copyToClipboard() {
         const clone = getCleanExportSvg();
         const svgData = new XMLSerializer().serializeToString(clone);
